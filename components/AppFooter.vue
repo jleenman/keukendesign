@@ -3,6 +3,7 @@ const props = defineProps({
   site: { type: Object, required: true }
 })
 
+const assetPath = useAssetPath()
 const mainFooterGroups = computed(() => props.site.footerGroups.filter((group) => group.title !== 'Juridisch'))
 const legalLinks = computed(() => props.site.footerGroups.find((group) => group.title === 'Juridisch')?.links || [])
 </script>
@@ -33,7 +34,10 @@ const legalLinks = computed(() => props.site.footerGroups.find((group) => group.
       </div>
     </div>
     <div v-if="legalLinks.length" class="footer-inner footer-legal" aria-label="Juridische links">
-      <NuxtLink v-for="link in legalLinks" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
+      <template v-for="link in legalLinks" :key="link.to || link.href">
+        <a v-if="link.href" :href="assetPath(link.href)">{{ link.label }}</a>
+        <NuxtLink v-else :to="link.to">{{ link.label }}</NuxtLink>
+      </template>
     </div>
   </footer>
 </template>
