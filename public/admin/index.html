@@ -161,6 +161,7 @@
         var storedUser = readStoredUser();
         var tokenFromUrl = getTokenFromUrl();
         var hasAuthCallback = /(?:access_token|code|error)=/.test(window.location.hash + window.location.search);
+        var decapLoaded = false;
 
         function readStoredUser() {
           var data = window.localStorage.getItem(storageKey);
@@ -241,6 +242,18 @@
         }
 
         function loadDecap() {
+          if (decapLoaded) {
+            return;
+          }
+
+          decapLoaded = true;
+
+          var tokenLogin = document.getElementById('cms-token-login');
+
+          if (tokenLogin) {
+            tokenLogin.hidden = true;
+          }
+
           var script = document.createElement('script');
           script.src = 'https://unpkg.com/decap-cms@3.8.3/dist/decap-cms.js';
           script.async = true;
@@ -275,13 +288,32 @@
           button.textContent = isPending ? 'Token controleren...' : 'Open CMS';
         }
 
+        function setCmsRoute(defaultHash) {
+          if (!defaultHash || window.location.hash) {
+            return;
+          }
+
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, document.title, window.location.pathname + defaultHash);
+            return;
+          }
+
+          window.location.hash = defaultHash;
+        }
+
+        function enterCms(defaultHash) {
+          setCmsRoute(defaultHash);
+          login.hidden = true;
+          loadDecap();
+        }
+
         function persistTokenAndReload(token) {
           setPendingState(true);
           error.hidden = true;
 
           validateToken(token).then(function (userData) {
             window.localStorage.setItem(storageKey, JSON.stringify(userData));
-            window.location.replace(window.location.pathname + '#/collections/pages');
+            enterCms('#/collections/pages');
           }).catch(function (validationError) {
             error.textContent = validationError.message;
             error.hidden = false;
@@ -299,7 +331,7 @@
         if (storedUser && storedUser.token && storedUser.backendName === 'github') {
           validateToken(storedUser.token).then(function (userData) {
             window.localStorage.setItem(storageKey, JSON.stringify(userData));
-            loadDecap();
+            enterCms('#/collections/pages');
           }).catch(function (validationError) {
             window.localStorage.removeItem(storageKey);
             showLogin('Opgeslagen token is niet meer geldig: ' + validationError.message);
