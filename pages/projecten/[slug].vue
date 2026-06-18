@@ -3,6 +3,7 @@ import { projects } from '~/content/projects.mjs'
 
 const route = useRoute()
 const project = computed(() => projects.find((item) => item.slug === route.params.slug))
+const selectedImageIndex = ref(null)
 
 if (!project.value) {
   throw createError({ statusCode: 404, statusMessage: 'Project niet gevonden' })
@@ -17,6 +18,50 @@ useSeoMeta({
 })
 
 const related = computed(() => projects.filter((item) => item.slug !== project.value.slug && item.system === project.value.system).slice(0, 3))
+const isGalleryOpen = computed(() => selectedImageIndex.value !== null)
+const activeImage = computed(() => {
+  if (selectedImageIndex.value === null) return null
+  return project.value.gallery[selectedImageIndex.value]
+})
+
+function openGallery(index) {
+  selectedImageIndex.value = index
+}
+
+function closeGallery() {
+  selectedImageIndex.value = null
+}
+
+function showPreviousImage() {
+  const total = project.value.gallery.length
+  selectedImageIndex.value = (selectedImageIndex.value - 1 + total) % total
+}
+
+function showNextImage() {
+  const total = project.value.gallery.length
+  selectedImageIndex.value = (selectedImageIndex.value + 1) % total
+}
+
+function handleGalleryKeydown(event) {
+  if (!isGalleryOpen.value) return
+
+  if (event.key === 'Escape') closeGallery()
+  if (event.key === 'ArrowLeft') showPreviousImage()
+  if (event.key === 'ArrowRight') showNextImage()
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleGalleryKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleGalleryKeydown)
+  document.body.classList.remove('is-lightbox-open')
+})
+
+watch(isGalleryOpen, (open) => {
+  document.body.classList.toggle('is-lightbox-open', open)
+})
 </script>
 
 <template>
@@ -57,14 +102,61 @@ const related = computed(() => projects.filter((item) => item.slug !== project.v
 
   <ContentSection title="Fotogalerij">
     <div class="gallery-grid">
-      <ResponsiveImage
+      <button
         v-for="(image, index) in project.gallery"
         :key="image"
-        :src="image"
-        :alt="`${project.title}, foto ${index + 1}`"
-      />
+        class="gallery-button"
+        type="button"
+        :aria-label="`Bekijk ${project.title}, foto ${index + 1} fullscreen`"
+        @click="openGallery(index)"
+      >
+        <ResponsiveImage
+          :src="image"
+          :alt="`${project.title}, foto ${index + 1}`"
+        />
+      </button>
     </div>
   </ContentSection>
+
+  <Teleport to="body">
+    <div
+      v-if="isGalleryOpen"
+      class="lightbox"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="`Fotogalerij van ${project.title}`"
+      @click.self="closeGallery"
+    >
+      <button class="lightbox-close" type="button" aria-label="Sluit fotogalerij" @click="closeGallery">×</button>
+      <button
+        v-if="project.gallery.length > 1"
+        class="lightbox-nav lightbox-prev"
+        type="button"
+        aria-label="Vorige foto"
+        @click="showPreviousImage"
+      >
+        ‹
+      </button>
+      <figure class="lightbox-figure">
+        <ResponsiveImage
+          v-if="activeImage"
+          :src="activeImage"
+          :alt="`${project.title}, foto ${selectedImageIndex + 1} van ${project.gallery.length}`"
+          loading="eager"
+        />
+        <figcaption>{{ selectedImageIndex + 1 }} / {{ project.gallery.length }}</figcaption>
+      </figure>
+      <button
+        v-if="project.gallery.length > 1"
+        class="lightbox-nav lightbox-next"
+        type="button"
+        aria-label="Volgende foto"
+        @click="showNextImage"
+      >
+        ›
+      </button>
+    </div>
+  </Teleport>
 
   <ContentSection v-if="related.length" title="Gerelateerde projecten">
     <div class="grid">
