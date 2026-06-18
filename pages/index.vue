@@ -5,35 +5,6 @@ import { projects } from '~/content/projects.mjs'
 
 const page = pages.home
 const featuredProjects = projects.slice(0, 3)
-const systemCards = [
-  {
-    system: 'b1',
-    title: 'b1',
-    text: 'Eenvoudig, helder en functioneel. Geschikt wanneer rust en toegankelijkheid centraal staan.',
-    to: '/bulthaup/b1/',
-    link: 'Lees over b1',
-    image: projects.find((project) => project.system === 'b1')?.cover,
-    alt: 'Bulthaup b1 keuken met eiken natuur en eilandopstelling'
-  },
-  {
-    system: 'b2',
-    title: 'b2',
-    text: 'Een meer losse, functionele benadering met werkbank- en kastprincipes.',
-    to: '/bulthaup/b2/',
-    link: 'Lees over b2',
-    image: projects.find((project) => project.system === 'b2')?.cover,
-    alt: 'Bulthaup b2 keuken met werkbank en kastprincipe'
-  },
-  {
-    system: 'b3',
-    title: 'b3',
-    text: 'Het meest flexibele systeem voor wand, eiland, nissen en rijke materiaalkeuzes.',
-    to: '/bulthaup/b3/',
-    link: 'Lees over b3',
-    image: projects.find((project) => project.system === 'b3')?.cover,
-    alt: 'Bulthaup b3 keuken met maatwerk kastenwand en eiland'
-  }
-]
 
 useSeoMeta({
   title: page.seoTitle,
@@ -116,19 +87,6 @@ useSeoMeta({
         <p>Filip Leenman werkt sinds 1985 als keukenadviseur en heeft sinds 1998 zijn eigen keukenzaak. Een keuken wordt ontworpen rond koken, boodschappen, voorraad, ontbijt, afval, lichtval, architectuur en samen gebruik.</p>
         <p style="margin-top:1rem">In de showroom ervaart u materialen, fronten, werkbladen en bulthaup-systemen van dichtbij. Dat maakt keuzes over indeling, kleur en afwerking concreet.</p>
       </div>
-    </div>
-  </ContentSection>
-
-  <ContentSection eyebrow="Bulthaup" title="b1, b2 en b3 in één oogopslag">
-    <div class="grid system-grid">
-      <article v-for="card in systemCards" :key="card.system" class="panel system-card">
-        <ResponsiveImage v-if="card.image" :src="card.image" :alt="card.alt" />
-        <div class="system-card-body">
-          <h3>{{ card.title }}</h3>
-          <p>{{ card.text }}</p>
-          <NuxtLink :to="card.to">{{ card.link }}</NuxtLink>
-        </div>
-      </article>
     </div>
   </ContentSection>
 
