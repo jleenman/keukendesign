@@ -31,11 +31,11 @@ const systemCards = [
   {
     system: 'bm',
     title: 'bm',
-    text: 'Nieuwe informatie over bm volgt zodra foto’s en aanvullende content beschikbaar zijn.',
+    text: 'bm brengt rustige belijning, verfijnde materiaalcombinaties en dagelijkse bruikbaarheid samen in een nieuwe bulthaup-lijn.',
     to: '/bulthaup/bm/',
     link: 'Lees over bm',
-    image: undefined,
-    alt: 'Bulthaup bm'
+    image: projects.find((project) => project.system === 'bm')?.cover,
+    alt: 'Bulthaup bm keuken met verfijnde materialen'
   }
 ]
 </script>

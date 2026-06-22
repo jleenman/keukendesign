@@ -1,4 +1,5 @@
 <script setup>
+import { extendoProducts } from '~/content/extendo-products.mjs'
 import { pages } from '~/content/pages.mjs'
 
 const page = pages.extendo
@@ -8,22 +9,25 @@ useSeoMeta({
   description: page.description,
   ogTitle: page.title,
   ogDescription: page.intro,
-  ogImage: page.gallery?.[0]?.image
+  ogImage: extendoProducts[0]?.image
 })
 </script>
 
 <template>
   <ContentSection :breadcrumbs="[{ label: 'Home', to: '/' }, { label: 'Extendo' }]" eyebrow="Extendo" :title="page.title" :text="page.intro">
-    <div class="grid">
-      <article v-for="item in page.gallery" :key="item.image" class="card project-card">
-        <ResponsiveImage :src="item.image" :alt="item.title" />
-        <div class="card-body">
-          <p class="meta-label">Extendo</p>
-          <h3>{{ item.title }}</h3>
+    <div class="grid product-grid">
+      <NuxtLink v-for="product in extendoProducts" :key="product.slug" class="card product-card" :to="`/extendo/${product.slug}/`">
+        <ResponsiveImage :src="product.image" :alt="product.alt" />
+        <div class="product-card-body">
+          <p class="eyebrow">{{ product.eyebrow }}</p>
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.summary }}</p>
+          <span>Bekijk product</span>
         </div>
-      </article>
+      </NuxtLink>
     </div>
   </ContentSection>
+
   <ContentSection dark title="Bekijk Extendo in combinatie met uw keukenplan" text="Bespreek in de showroom hoe tafel, stoelen en meubels aansluiten op uw keukenontwerp.">
     <ContactActions />
   </ContentSection>

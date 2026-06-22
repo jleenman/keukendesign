@@ -60,6 +60,8 @@ footerGroups:
         to: /advies/werkwijze/
       - label: Afspraak voorbereiden
         to: /advies/afspraak-voorbereiden/
+      - label: Extendo kastinrichting
+        to: /extendo/
   - title: Juridisch
     links:
       - label: Privacy

@@ -1,4 +1,5 @@
 import { writeFileSync } from 'node:fs'
+import { extendoProducts } from '../content/extendo-products.mjs'
 import { site } from '../content/site.mjs'
 import { projects } from '../content/projects.mjs'
 
@@ -13,6 +14,7 @@ const routes = [
   '/bulthaup/bm/',
   '/contact/',
   '/extendo/',
+  ...extendoProducts.map((product) => `/extendo/${product.slug}/`),
   '/keukens-amersfoort/',
   '/privacy/',
   '/projecten/',

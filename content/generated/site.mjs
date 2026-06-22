@@ -109,6 +109,10 @@ export const site = {
         {
           "label": "Afspraak voorbereiden",
           "to": "/advies/afspraak-voorbereiden/"
+        },
+        {
+          "label": "Extendo kastinrichting",
+          "to": "/extendo/"
         }
       ]
     },
